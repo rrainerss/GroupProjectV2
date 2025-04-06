@@ -1,23 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  FlatList,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
-import {
-  collection,
-  addDoc,
-  onSnapshot,
-  query,
-  orderBy,
-  Timestamp,
-} from 'firebase/firestore';
-import { FIREBASE_DB, FIREBASE_AUTH } from '../../../FirebaseConfig';
+import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, KeyboardAvoidingView, Platform} from 'react-native';
+import {collection, addDoc, onSnapshot, query, orderBy, Timestamp} from 'firebase/firestore';
+import { FIREBASE_DB, FIREBASE_AUTH } from '../../../FirebaseConfig.js';
 
 const HomeScreen = () => {
   const [messages, setMessages] = useState<any[]>([]);

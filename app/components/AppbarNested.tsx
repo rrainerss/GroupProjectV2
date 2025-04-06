@@ -1,29 +1,25 @@
 import * as React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Appbar } from 'react-native-paper';
-import { Colors } from '../../colors.js';
+import { Colors } from '../../colors';
 import { useNavigation } from '@react-navigation/native';
 
 type AppbarNestedProps = {
   title: string;
 };
 
-
 const AppbarNested = ({ title }: AppbarNestedProps) => {
   const navigation = useNavigation();
-  
+
   return (
     <Appbar.Header style={styles.header}>
       <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <View style={styles.titleView}>
-          <Text style={styles.title}>{title}</Text>
-        </View>
-      <Appbar.Action icon="account" onPress={() => {}} />
+      <View style={styles.titleView}>
+        <Text style={styles.title}>{title}</Text>
+      </View>
     </Appbar.Header>
   );
 };
-
-export default AppbarNested;
 
 const styles = StyleSheet.create({
   header: {
@@ -38,4 +34,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: Colors.accent,
   },
-})
+});
+
+export default AppbarNested;

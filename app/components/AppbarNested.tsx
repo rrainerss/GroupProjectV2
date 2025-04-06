@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Appbar } from 'react-native-paper';
-import { Colors } from '../../colors';
+import { Colors } from '../../colors.js';
 import { useNavigation } from '@react-navigation/native';
 
 type AppbarNestedProps = {

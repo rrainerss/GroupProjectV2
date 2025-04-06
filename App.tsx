@@ -1,14 +1,15 @@
-import { NavigationContainer } from '@react-navigation/native';
+import './gesture-handler';
+import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Welcome from './app/screens/auth/Welcome';
-import Login from './app/screens/auth/Login';
-import Register from './app/screens/auth/Register';
-import Home from './app/screens/Home';
+import Welcome from './app/screens/auth/Welcome.js';
+import Login from './app/screens/auth/Login.js';
+import Register from './app/screens/auth/Register.js';
+import Home from './app/screens/Home.js';
 import { useEffect, useState } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { FIREBASE_AUTH } from './FirebaseConfig';
-import PrivateChat from './app/screens/chat/PrivateChat';
-import GroupChat from './app/screens/chat/GroupChat';
+import { FIREBASE_AUTH } from './FirebaseConfig.js';
+import PrivateChat from './app/screens/chat/PrivateChat.js';
+import GroupChat from './app/screens/chat/GroupChat.js';
 
 const Stack = createNativeStackNavigator();
 const InsideStack = createNativeStackNavigator();

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Appbar } from 'react-native-paper';
-import { Colors } from '../../colors';
+import { Colors } from '../../colors.js';
 import {
   NavigationContainer,
   DrawerActions,

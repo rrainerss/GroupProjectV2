@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, Dimensions, Button } from 'react-native';
 import React from 'react';
 import AppbarHome from '../components/AppbarHome.js'
 
-import { FIREBASE_AUTH } from '../../FirebaseConfig'; 
+import { FIREBASE_AUTH } from '../../FirebaseConfig.js'; 
 const { width } = Dimensions.get('window');
 
 type HomeProps = {

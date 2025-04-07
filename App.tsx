@@ -18,6 +18,7 @@ import PrivateChat from './app/screens/chat/PrivateChat';
 import GroupChatHome from './app/screens/group/GroupChatHome';
 import GroupChat from './app/screens/group/GroupChat';
 import Files from './app/screens/files/Files';
+import CreateGroup from './app/screens/group/CreateGroup';
 
 const Stack = createNativeStackNavigator();
 const InsideStack = createNativeStackNavigator();
@@ -54,6 +55,7 @@ const GroupsStack = () => {
     }}>
       <Stack.Screen name="GroupsHome" component={GroupChatHome} />
       <Stack.Screen name="GroupChat" component={GroupChat} />
+      <Stack.Screen name="CreateGroup" component={CreateGroup} />
     </Stack.Navigator>
   );
 };

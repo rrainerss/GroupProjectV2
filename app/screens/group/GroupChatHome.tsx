@@ -7,7 +7,6 @@ import { FIREBASE_AUTH, FIREBASE_DB } from '../../../FirebaseConfig';
 import AppbarHome from '@/app/components/AppbarHome';
 import WideCard from '@/app/components/WideCard';
 import { Colors } from '@/colors';
-import { IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 const { width } = Dimensions.get('window');
 
@@ -16,7 +15,7 @@ const ChatHome = () => {
     const user = FIREBASE_AUTH.currentUser;
     const navigation = useNavigation();
 
-    //Fetch groups on mount
+    //Fetch groups on load and dynamically
     useEffect(() => {
       const unsubscribe = onSnapshot(collection(FIREBASE_DB, 'groups'), (snapshot) => {
         const data = snapshot.docs.map((doc) => ({
@@ -29,27 +28,27 @@ const ChatHome = () => {
     }, []);
 
     //Simple group creation for testing
-    const createRandomGroup = async () => {
-      if (!user) return;
+    // const createRandomGroup = async () => {
+    //   if (!user) return;
   
-      const randomNumber = Math.floor(1000 + Math.random() * 9000);
-      const randomName = `Group ${randomNumber}`;
+    //   const randomNumber = Math.floor(1000 + Math.random() * 9000);
+    //   const randomName = `Group ${randomNumber}`;
   
-      try {
-        await addDoc(collection(FIREBASE_DB, 'groups'), {
-          name: randomName,
-          createdAt: Timestamp.now(),
-          createdBy: {
-            uid: user.uid,
-            email: user.email,
-          },
-          members: [user.uid],
-        });
-      } 
-      catch (error) {
-        console.error('Error adding group:', error);
-      }
-    };
+    //   try {
+    //     await addDoc(collection(FIREBASE_DB, 'groups'), {
+    //       name: randomName,
+    //       createdAt: Timestamp.now(),
+    //       createdBy: {
+    //         uid: user.uid,
+    //         email: user.email,
+    //       },
+    //       members: [user.uid],
+    //     });
+    //   } 
+    //   catch (error) {
+    //     console.error('Error adding group:', error);
+    //   }
+    // };
 
     //Jsx
     return (
@@ -69,14 +68,14 @@ const ChatHome = () => {
                 letter={group.name?.charAt(0) || '?'}
                 imageSrc="https://placehold.co/100x100"
                 accentColor="#F98012"
-                onPress={() => navigation.navigate('GroupChat', { groupId: group.id, groupName: group.name })}
+                onPress={() => navigation.navigate('GroupChat', { groupId: group.id, groupName: group.name, accentColor: '#F98012' })}
               />
             ))}
           </View>
         </ScrollView>
         <FAB
           icon="plus"
-          onPress={createRandomGroup}
+          onPress={() => navigation.navigate('CreateGroup')}
           style={styles.fab}
           color={Colors.accent}
           customSize={60}

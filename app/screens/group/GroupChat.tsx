@@ -3,30 +3,40 @@ import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Keyboard
 import { useRoute } from '@react-navigation/native';
 import { collection, addDoc, onSnapshot, query, orderBy, Timestamp } from 'firebase/firestore';
 import { FIREBASE_DB, FIREBASE_AUTH } from '../../../FirebaseConfig';
+import AppbarNested from '@/app/components/AppbarNested';
+import { IconButton } from 'react-native-paper';
+import { Colors } from '@/colors';
 
 const GroupChat = () => {
   const route = useRoute();
-  const { groupId, groupName } = route.params as { groupId: string; groupName?: string };
+  const { groupId, groupName, accentColor } = route.params as { 
+    groupId: string; 
+    groupName: string; 
+    accentColor?: string; 
+  };
 
   const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState('');
   const user = FIREBASE_AUTH.currentUser;
 
+  //Set loaded messages
   useEffect(() => {
     const messagesRef = collection(FIREBASE_DB, 'groups', groupId, 'messages');
     const q = query(messagesRef, orderBy('createdAt', 'desc'));
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const msgs = snapshot.docs.map((doc) => ({
+      const fetchedMessages = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      setMessages(msgs);
+      setMessages(fetchedMessages);
     });
 
     return () => unsubscribe();
   }, [groupId]);
 
+  //Send a new message
+  //Todo: pass an accent color and show it for incoming messages
   const sendMessage = async () => {
     if (input.trim().length === 0 || !user) return;
 
@@ -42,46 +52,56 @@ const GroupChat = () => {
     setInput('');
   };
 
+  //Message bubble, conditional styling
   const renderItem = ({ item }: { item: any }) => (
-    <View
-      style={[
-        styles.messageBubble,
-        item.user.uid === user?.uid ? styles.myMessage : styles.otherMessage,
-      ]}
-    >
-      <Text style={styles.messageText}>{item.text}</Text>
-      <Text style={styles.senderText}>
-        {item.user.email === user?.email ? 'You' : item.user.email}
-      </Text>
+    <View style={styles.messageRow}>
+      {item.user.uid !== user?.uid && (
+        <View style={styles.avatarCircle}>
+          <Text style={styles.avatarText}>
+            {item.user.email?.charAt(0).toUpperCase() || '?'}
+          </Text>
+        </View>
+      )}
+      <View style={[styles.messageBubble, item.user.uid === user?.uid ? styles.myMessage : styles.otherMessage]}>
+        <Text style={styles.messageText}>{item.text}</Text>
+        <Text style={styles.senderText}>
+          {item.user.email === user?.email ? 'You' : item.user.email}
+        </Text>
+      </View>
     </View>
   );
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={100}
-    >
-      <FlatList
-        data={messages}
-        inverted
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        contentContainerStyle={{ padding: 10 }}
-      />
-
-      <View style={styles.inputContainer}>
-        <TextInput
-          value={input}
-          onChangeText={setInput}
-          placeholder="Type a message"
-          style={styles.input}
+    <>
+      <AppbarNested title={groupName}></AppbarNested>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={100}>
+        <FlatList
+          data={messages}
+          inverted
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          contentContainerStyle={{ padding: 10 }}
+          ListEmptyComponent={
+            <Text style={{ textAlign: 'center', color: 'darkgray', flex: 1, height: 50, fontSize: 20 }}>
+              No messages yet!
+            </Text>
+          }
         />
-        <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
-          <Text style={{ color: '#fff', fontWeight: 'bold' }}>Send</Text>
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+
+        <View style={styles.inputContainer}>
+          <TextInput
+            value={input}
+            onChangeText={setInput}
+            placeholder="Type a message"
+            style={styles.input}
+          />
+          <IconButton icon="send" iconColor='white' onPress={sendMessage} style={styles.sendButton}></IconButton>
+        </View>
+      </KeyboardAvoidingView>
+    </>
   );
 };
 
@@ -90,52 +110,74 @@ export default GroupChat;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.background,
   },
   messageBubble: {
     marginVertical: 4,
     padding: 10,
-    borderRadius: 10,
-    maxWidth: '75%',
+    borderRadius: 20,
+    maxWidth: '70%',
+    elevation: 3,
   },
   myMessage: {
-    backgroundColor: '#DCF8C5',
-    alignSelf: 'flex-end',
+    backgroundColor: Colors.primary,
+    marginStart: 'auto',
+    borderBottomRightRadius: 5,
   },
   otherMessage: {
-    backgroundColor: '#E5E5EA',
+    backgroundColor: 'lightgray',
     alignSelf: 'flex-start',
+    borderBottomLeftRadius: 5,
   },
   messageText: {
-    fontSize: 16,
+    fontSize: 18,
   },
   senderText: {
     fontSize: 12,
-    marginTop: 4,
-    color: '#555',
+    marginTop: 2,
+    color: 'gray',
   },
+  messageRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    marginBottom: 10,
+  },
+  avatarCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: Colors.accent,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  avatarText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+
+  
   inputContainer: {
     flexDirection: 'row',
-    padding: 10,
-    borderTopWidth: 1,
-    borderColor: '#ddd',
+    paddingVertical: 7,
     alignItems: 'center',
-    backgroundColor: '#fafafa',
+    backgroundColor: 'white',
+    borderBottomColor: 'white',
   },
   input: {
     flex: 1,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#ccc',
+    height: 50,
+    borderRadius: 25,
     paddingHorizontal: 15,
-    backgroundColor: '#fff',
+    marginLeft: 10,
+    marginRight: 5,
+    backgroundColor: Colors.background,
   },
   sendButton: {
-    marginLeft: 10,
-    backgroundColor: '#F98012',
-    borderRadius: 20,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
+    marginRight: 10,
+    backgroundColor: Colors.accent,
+    borderRadius: 25,
+    width: 50,
+    height: 50,
   },
 });

@@ -4,11 +4,11 @@ import { Appbar } from 'react-native-paper';
 import { Colors } from '../../colors';
 import { useNavigation } from '@react-navigation/native';
 
-type AppbarNestedProps = {
+type AppbarNestedBlankProps = {
   title: string;
 };
 
-const AppbarNested = ({ title }: AppbarNestedProps) => {
+const AppbarNestedBlank = ({ title }: AppbarNestedBlankProps) => {
   const navigation = useNavigation();
 
   return (
@@ -17,7 +17,7 @@ const AppbarNested = ({ title }: AppbarNestedProps) => {
       <View style={styles.titleView}>
         <Text style={styles.title}>{title}</Text>
       </View>
-      <Appbar.Action icon="information-outline" onPress={() => {}} />
+      <Appbar.Action icon="blank" color="transparent" onPress={() => {}} />
     </Appbar.Header>
   );
 };
@@ -37,4 +37,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppbarNested;
+export default AppbarNestedBlank;

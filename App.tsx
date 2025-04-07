@@ -16,6 +16,7 @@ import Home from './app/screens/Home';
 import ChatHome from './app/screens/chat/ChatHome';
 import PrivateChat from './app/screens/chat/PrivateChat';
 import GroupChat from './app/screens/chat/GroupChat';
+import Files from './app/screens/files/Files';
 
 const Stack = createNativeStackNavigator();
 const InsideStack = createNativeStackNavigator();
@@ -61,7 +62,7 @@ const FilesStack = () => {
       headerShown: false,
       contentStyle: styles.mainContent,
     }}>
-      <Stack.Screen name="FilesHome" component={Home} />
+      <Stack.Screen name="FilesHome" component={Files} />
     </Stack.Navigator>
   );
 };

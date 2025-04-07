@@ -14,6 +14,7 @@ const Home = () => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Recent groups</Text>
           <TouchableOpacity style={styles.cardBody}>
+            <View style={styles.imagePlaceholder}></View>
             <Text>Aaaaa</Text>
           </TouchableOpacity>
         </View>
@@ -45,5 +46,8 @@ const styles = StyleSheet.create({
     cardBody: {
       backgroundColor: 'gray',
       marginTop: 10,
+    },
+    imagePlaceholder: {
+      height: 60
     }
 })

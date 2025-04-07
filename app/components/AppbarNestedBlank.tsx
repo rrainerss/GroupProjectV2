@@ -25,6 +25,7 @@ const AppbarNestedBlank = ({ title }: AppbarNestedBlankProps) => {
 const styles = StyleSheet.create({
   header: {
     justifyContent: 'space-between',
+    zIndex: 1,
   },
   titleView: {
     flex: 1,

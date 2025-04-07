@@ -14,15 +14,21 @@ const CreateGroup = () => {
   const [groupName, setGroupName] = React.useState('');
   const [groupDescription, setGroupDescription] = React.useState('');
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string>('');
   const years = [1, 2, 3, 4, 5];
   const user = FIREBASE_AUTH.currentUser;
   const navigation = useNavigation();
+  const pastelColors = [
+    '#FFB3BA', '#FFDFBA', '#FFFFBA',
+    '#BAFFC9', '#BAE1FF', '#D7BAFF',
+    '#F0BAFF', '#FFBACF', '#C7FFBA',
+  ];
 
   const createGroup = async () => {
     if (!user) return;
 
-    if (!groupName.trim() || !groupDescription.trim() || !selectedYear) {
-      ToastAndroid.show("Please fill in all fields", ToastAndroid.SHORT);
+    if (!groupName.trim() || !groupDescription.trim() || !selectedYear || !selectedColor) {
+      ToastAndroid.show("Please fill in and select all fields", ToastAndroid.SHORT);
       return;
     }
 
@@ -35,7 +41,8 @@ const CreateGroup = () => {
           uid: user.uid,
           email: user.email,
         },
-        year: selectedYear
+        year: selectedYear,
+        color: selectedColor,
       });
       navigation.goBack();
     } 
@@ -47,43 +54,72 @@ const CreateGroup = () => {
 
   return (
     <View style={{flex: 1}}>
-      <AppbarNestedBlank title="Create a new group" />
+      <AppbarNestedBlank title="Create a new group"/>
         <View style={styles.container}>
-          <KeyboardAvoidingView behavior="padding" style={styles.inputContainer}>
+          <View style={styles.inputContainer}>
             <View style={styles.avatarCircle}></View>
             <TextInput 
-                value={groupName} 
-                style={styles.input} 
-                placeholder="Group name" 
-                placeholderTextColor="#A0A0A0"
-                autoCapitalize="none" 
-                keyboardType="default"
-                onChangeText={(text) => setGroupName(text)} 
+              value={groupName} 
+              style={styles.input} 
+              placeholder="Group name" 
+              placeholderTextColor="#A0A0A0"
+              autoCapitalize="none" 
+              keyboardType="default"
+              onChangeText={(text) => setGroupName(text)} 
             />
             <TextInput 
-                value={groupDescription} 
-                style={styles.input} 
-                placeholder="Describe your group here" 
-                placeholderTextColor="#A0A0A0"
-                autoCapitalize="none" 
-                keyboardType="default"
-                onChangeText={(text) => setGroupDescription(text)} 
+              value={groupDescription} 
+              style={styles.input} 
+              placeholder="Describe your group here" 
+              placeholderTextColor="#A0A0A0"
+              autoCapitalize="none" 
+              keyboardType="default"
+              onChangeText={(text) => setGroupDescription(text)} 
             />
             <Text style={styles.sectionTitle}>Year</Text>
             <View style={styles.selectionContainer}>
-                {years.map((year) => (
-                  <TouchableOpacity
-                    key={year}
-                    style={[styles.option, selectedYear === year && styles.selectedOption]}
-                    onPress={() => setSelectedYear(year)}>
-                    <Text style={[styles.optionText, selectedYear === year && styles.selectedText]}>{year}</Text>
-                  </TouchableOpacity>
-                ))}
+              {years.map((year) => (
+                <TouchableOpacity
+                  key={year}
+                  style={[styles.option, selectedYear === year && styles.selectedOption]}
+                  onPress={() => setSelectedYear(year)}>
+                  <Text style={[styles.optionText, selectedYear === year && styles.selectedText]}>{year}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
-          </KeyboardAvoidingView>
-            <TouchableOpacity style={styles.confirmButton} onPress={createGroup}>
-                <Text style={styles.confirmText}>Create group</Text>
-            </TouchableOpacity>
+          </View>
+          <Text style={styles.sectionTitle}>Theme color</Text>
+          <View style={styles.colorGrid}>
+            <View style={styles.colorRow}>
+              {pastelColors.slice(0, 5).map((color, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.colorCircle,
+                    { backgroundColor: color },
+                    selectedColor === color && styles.selectedCircle
+                  ]}
+                  onPress={() => setSelectedColor(color)}
+                />
+              ))}
+            </View>
+            <View style={styles.colorRow}>
+              {pastelColors.slice(5).map((color, index) => (
+                <TouchableOpacity
+                  key={index + 5}
+                  style={[
+                    styles.colorCircle,
+                    { backgroundColor: color },
+                    selectedColor === color && styles.selectedCircle
+                  ]}
+                  onPress={() => setSelectedColor(color)}
+                />
+              ))}
+            </View>
+          </View>
+          <TouchableOpacity style={styles.confirmButton} onPress={createGroup}>
+              <Text style={styles.confirmText}>Create group</Text>
+          </TouchableOpacity>
         </View>
     </View>
   )
@@ -115,47 +151,67 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: Colors.accent,
+    backgroundColor: 'lightgray',
     marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginTop: 15,
-},
-selectionContainer: {
+  },
+  selectionContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      marginTop: 10,
+  },
+  option: {
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 25,
+    borderWidth: 1,
+    marginHorizontal: 5,
+  },
+  selectedOption: {
+    backgroundColor: '#F98012',
+    borderWidth: 0,
+  },
+  optionText: {
+    fontSize: 16,
+  },
+  selectedText: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+  },
+  confirmButton: {
+    backgroundColor: '#F98012',
+    paddingVertical: 15,
+    paddingHorizontal: 50,
+    borderRadius: 100,
+    marginTop: 25,
+  },
+  confirmText: {
+    fontSize: 18,
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+  },
+  colorGrid: {
+    marginTop: 15,
+    alignItems: 'center',
+  },
+  colorRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 10,
-},
-option: {
-  paddingVertical: 10,
-  paddingHorizontal: 15,
-  borderRadius: 25,
-  borderWidth: 1,
-  marginHorizontal: 5,
-},
-selectedOption: {
-  backgroundColor: '#F98012',
-  borderWidth: 0,
-},
-optionText: {
-  fontSize: 16,
-},
-selectedText: {
-  color: '#FFFFFF',
-  fontWeight: 'bold',
-},
-confirmButton: {
-  backgroundColor: '#F98012',
-  paddingVertical: 15,
-  paddingHorizontal: 50,
-  borderRadius: 100,
-  marginTop: 25,
-},
-confirmText: {
-  fontSize: 18,
-  color: '#FFFFFF',
-  fontWeight: 'bold',
-},
+    marginBottom: 10,
+  },
+  colorCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginHorizontal: 6,
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  selectedCircle: {
+    borderColor: Colors.accent,
+  },
 })

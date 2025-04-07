@@ -12,7 +12,7 @@ const GroupChat = () => {
   const { groupId, groupName, accentColor } = route.params as { 
     groupId: string; 
     groupName: string; 
-    accentColor?: string; 
+    accentColor: string; 
   };
 
   const [messages, setMessages] = useState<any[]>([]);
@@ -36,7 +36,6 @@ const GroupChat = () => {
   }, [groupId]);
 
   //Send a new message
-  //Todo: pass an accent color and show it for incoming messages
   const sendMessage = async () => {
     if (input.trim().length === 0 || !user) return;
 
@@ -53,27 +52,31 @@ const GroupChat = () => {
   };
 
   //Message bubble, conditional styling
-  const renderItem = ({ item }: { item: any }) => (
-    <View style={styles.messageRow}>
-      {item.user.uid !== user?.uid && (
-        <View style={styles.avatarCircle}>
-          <Text style={styles.avatarText}>
-            {item.user.email?.charAt(0).toUpperCase() || '?'}
+  const renderItem = ({ item }: { item: any }) => {
+    const backgroundColor = accentColor || 'lightgray';
+  
+    return (
+      <View style={styles.messageRow}>
+        {item.user.uid !== user?.uid && (
+          <View style={styles.avatarCircle}>
+            <Text style={styles.avatarText}>
+              {item.user.email?.charAt(0).toUpperCase() || '?'}
+            </Text>
+          </View>
+        )}
+        <View style={[ styles.messageBubble, item.user.uid === user?.uid ? { ...styles.myMessage, backgroundColor } : styles.otherMessage,]}>
+          <Text style={styles.messageText}>{item.text}</Text>
+          <Text style={styles.senderText}>
+            {item.user.email === user?.email ? 'You' : item.user.email}
           </Text>
         </View>
-      )}
-      <View style={[styles.messageBubble, item.user.uid === user?.uid ? styles.myMessage : styles.otherMessage]}>
-        <Text style={styles.messageText}>{item.text}</Text>
-        <Text style={styles.senderText}>
-          {item.user.email === user?.email ? 'You' : item.user.email}
-        </Text>
       </View>
-    </View>
-  );
+    );
+  };
 
   return (
     <>
-      <AppbarNested title={groupName}></AppbarNested>
+      <AppbarNested title={groupName} backgroundColor={accentColor}></AppbarNested>
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -98,7 +101,7 @@ const GroupChat = () => {
             placeholder="Type a message"
             style={styles.input}
           />
-          <IconButton icon="send" iconColor='white' onPress={sendMessage} style={styles.sendButton}></IconButton>
+          <IconButton icon="send" iconColor='white' onPress={sendMessage} style={[styles.sendButton, { backgroundColor: accentColor }]}></IconButton>
         </View>
       </KeyboardAvoidingView>
     </>
@@ -120,7 +123,6 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   myMessage: {
-    backgroundColor: Colors.primary,
     marginStart: 'auto',
     borderBottomRightRadius: 5,
   },
@@ -175,7 +177,6 @@ const styles = StyleSheet.create({
   },
   sendButton: {
     marginRight: 10,
-    backgroundColor: Colors.accent,
     borderRadius: 25,
     width: 50,
     height: 50,

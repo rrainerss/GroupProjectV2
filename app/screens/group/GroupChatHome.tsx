@@ -15,6 +15,16 @@ const ChatHome = () => {
     const user = FIREBASE_AUTH.currentUser;
     const navigation = useNavigation();
 
+    // name: groupName,
+    // description: groupDescription,
+    // createdAt: Timestamp.now(),
+    // createdBy: {
+    //   uid: user.uid,
+    //   email: user.email,
+    // },
+    // year: selectedYear,
+    // color: selectedColor,
+
     //Fetch groups on load and dynamically
     useEffect(() => {
       const unsubscribe = onSnapshot(collection(FIREBASE_DB, 'groups'), (snapshot) => {
@@ -26,29 +36,6 @@ const ChatHome = () => {
 
       return () => unsubscribe();
     }, []);
-
-    //Simple group creation for testing
-    // const createRandomGroup = async () => {
-    //   if (!user) return;
-  
-    //   const randomNumber = Math.floor(1000 + Math.random() * 9000);
-    //   const randomName = `Group ${randomNumber}`;
-  
-    //   try {
-    //     await addDoc(collection(FIREBASE_DB, 'groups'), {
-    //       name: randomName,
-    //       createdAt: Timestamp.now(),
-    //       createdBy: {
-    //         uid: user.uid,
-    //         email: user.email,
-    //       },
-    //       members: [user.uid],
-    //     });
-    //   } 
-    //   catch (error) {
-    //     console.error('Error adding group:', error);
-    //   }
-    // };
 
     //Jsx
     return (
@@ -67,8 +54,8 @@ const ChatHome = () => {
                 description={`Created by ${group.createdBy?.email || 'unknown'}`}
                 letter={group.name?.charAt(0) || '?'}
                 imageSrc="https://placehold.co/100x100"
-                accentColor="#F98012"
-                onPress={() => navigation.navigate('GroupChat', { groupId: group.id, groupName: group.name, accentColor: '#F98012' })}
+                accentColor={group.color}
+                onPress={() => navigation.navigate('GroupChat', { groupId: group.id, groupName: group.name, accentColor: group.color })}
               />
             ))}
           </View>

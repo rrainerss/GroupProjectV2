@@ -5,6 +5,7 @@ import { FIREBASE_AUTH } from '../../FirebaseConfig';
 const { width } = Dimensions.get('window');
 
 import AppbarHome from '../components/AppbarHome';
+import WideCard from '../components/WideCard';
 
 const Home = () => {
   return (
@@ -13,10 +14,13 @@ const Home = () => {
       <ScrollView contentContainerStyle={styles.scrollview}>
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Recent groups</Text>
-          <TouchableOpacity style={styles.cardBody}>
-            <View style={styles.imagePlaceholder}></View>
-            <Text>Aaaaa</Text>
-          </TouchableOpacity>
+          <WideCard 
+            title='Sarmas lieliskais izcilais kurss'
+            description='Palīgā'
+            letter='A'
+            imageSrc='https://placehold.co/100x100'
+            accentColor='#ff0000'
+          />
         </View>
       </ScrollView>
       <ScrollView contentContainerStyle={styles.scrollview}>
@@ -42,12 +46,6 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 20,
         fontWeight: 'bold',
+        color: Colors.text,
     },
-    cardBody: {
-      backgroundColor: 'gray',
-      marginTop: 10,
-    },
-    imagePlaceholder: {
-      height: 60
-    }
 })

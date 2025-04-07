@@ -29,7 +29,7 @@ const HomeStack = () => {
       headerShown: false,
       contentStyle: styles.mainContent,
     }}>
-      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="HomeStack" component={Home} />
     </Stack.Navigator>
   );
 };

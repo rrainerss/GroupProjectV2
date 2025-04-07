@@ -13,9 +13,10 @@ import Welcome from './app/screens/auth/Welcome';
 import Login from './app/screens/auth/Login';
 import Register from './app/screens/auth/Register';
 import Home from './app/screens/Home';
-import ChatHome from './app/screens/chat/ChatHome';
+import PrivateChatHome from './app/screens/chat/PrivateChatHome';
 import PrivateChat from './app/screens/chat/PrivateChat';
-import GroupChat from './app/screens/chat/GroupChat';
+import GroupChatHome from './app/screens/group/GroupChatHome';
+import GroupChat from './app/screens/group/GroupChat';
 import Files from './app/screens/files/Files';
 
 const Stack = createNativeStackNavigator();
@@ -51,7 +52,8 @@ const GroupsStack = () => {
       headerShown: false,
       contentStyle: styles.mainContent,
     }}>
-      <Stack.Screen name="GroupsHome" component={Home} />
+      <Stack.Screen name="GroupsHome" component={GroupChatHome} />
+      <Stack.Screen name="GroupChat" component={GroupChat} />
     </Stack.Navigator>
   );
 };

@@ -8,6 +8,7 @@ type WideCardProps = {
   letter: string;
   imageSrc: string;
   accentColor: string;
+  onPress?: () => void;
 };
 
 const WideCard = ({ 
@@ -15,10 +16,11 @@ const WideCard = ({
   description, 
   letter, 
   imageSrc,
-  accentColor
+  accentColor,
+  onPress
 }: WideCardProps) => {
   return (
-    <TouchableOpacity style={styles.cardBody}>
+    <TouchableOpacity style={styles.cardBody} onPress={onPress}>
       <View style={styles.leftSide}>
         <View style={[styles.circleIcon, { backgroundColor: accentColor }]}>
           <Text style={styles.circleIconText}>{letter}</Text>
@@ -32,7 +34,7 @@ const WideCard = ({
         <View style={styles.imagePlaceholder}>
           <Image 
             source={{ uri: imageSrc }}
-            style={styles.imagePlaceholder}
+            style={[styles.imagePlaceholder, { backgroundColor: accentColor }]}
             resizeMode="cover"
           />
         </View>
@@ -45,10 +47,11 @@ const styles = StyleSheet.create({
   cardBody: {
     flexDirection: 'row',
     backgroundColor: 'white',
-    marginTop: 10,
+    marginBottom: 10,
     height: 80,
     borderRadius: 10,
     overflow: 'hidden',
+    elevation: 3,
   },
   leftSide: {
     flexDirection: 'row',
@@ -89,7 +92,6 @@ const styles = StyleSheet.create({
   imagePlaceholder: {
     width: 80,
     height: 80,
-    backgroundColor: 'lightgray',
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
   },

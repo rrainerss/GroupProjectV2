@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, KeyboardAvoidingView, Platform} from 'react-native';
-import {collection, addDoc, onSnapshot, query, orderBy, Timestamp} from 'firebase/firestore';
-import { FIREBASE_DB, FIREBASE_AUTH } from '../../../FirebaseConfig.js';
+import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { useRoute } from '@react-navigation/native';
+import { collection, addDoc, onSnapshot, query, orderBy, Timestamp } from 'firebase/firestore';
+import { FIREBASE_DB, FIREBASE_AUTH } from '../../../FirebaseConfig';
 
-const HomeScreen = () => {
+const GroupChat = () => {
+  const route = useRoute();
+  const { groupId, groupName } = route.params as { groupId: string; groupName?: string };
+
   const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState('');
   const user = FIREBASE_AUTH.currentUser;
 
   useEffect(() => {
-    const messagesRef = collection(FIREBASE_DB, 'chats');
+    const messagesRef = collection(FIREBASE_DB, 'groups', groupId, 'messages');
     const q = query(messagesRef, orderBy('createdAt', 'desc'));
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -21,12 +25,12 @@ const HomeScreen = () => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [groupId]);
 
   const sendMessage = async () => {
     if (input.trim().length === 0 || !user) return;
 
-    await addDoc(collection(FIREBASE_DB, 'chats'), {
+    await addDoc(collection(FIREBASE_DB, 'groups', groupId, 'messages'), {
       text: input,
       createdAt: Timestamp.now(),
       user: {
@@ -81,7 +85,7 @@ const HomeScreen = () => {
   );
 };
 
-export default HomeScreen;
+export default GroupChat;
 
 const styles = StyleSheet.create({
   container: {

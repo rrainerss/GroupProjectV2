@@ -4,7 +4,7 @@ import React from 'react';
 import { FIREBASE_AUTH } from '../../../FirebaseConfig'; 
 const { width } = Dimensions.get('window');
 
-const ChatHome = () => {  
+const PrivateChatHome = () => {  
     //functionality here
 
     return (
@@ -14,7 +14,7 @@ const ChatHome = () => {
     );
 };
 
-export default ChatHome;
+export default PrivateChatHome;
 
 const styles = StyleSheet.create({
     container: {

@@ -15,13 +15,13 @@ import Register from './app/screens/auth/Register';
 import Home from './app/screens/Home';
 import PrivateChatHome from './app/screens/chat/PrivateChatHome';
 import PrivateChat from './app/screens/chat/PrivateChat';
-import GroupChatHome from './app/screens/group/GroupChatHome';
+import GroupChatHome from './app/screens/group/GroupsHome';
 import GroupChat from './app/screens/group/GroupChat';
 import Files from './app/screens/files/Files';
 import CreateGroup from './app/screens/group/CreateGroup';
+import CreateChat from './app/screens/chat/CreateChat';
 
 const Stack = createNativeStackNavigator();
-const InsideStack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
 //Nav stacks
@@ -32,6 +32,8 @@ const HomeStack = () => {
       contentStyle: styles.mainContent,
     }}>
       <Stack.Screen name="HomeStack" component={Home} />
+      <Stack.Screen name="PrivateChat" component={PrivateChat} />
+      <Stack.Screen name="GroupChat" component={GroupChat} />
     </Stack.Navigator>
   );
 };
@@ -42,7 +44,9 @@ const MessagesStack = () => {
       headerShown: false,
       contentStyle: styles.mainContent,
     }}>
-      <Stack.Screen name="MessagesHome" component={Home} />
+      <Stack.Screen name="PrivateChatHome" component={PrivateChatHome} />
+      <Stack.Screen name="CreateChat" component={CreateChat} />
+      <Stack.Screen name="PrivateChat" component={PrivateChat} />
     </Stack.Navigator>
   );
 };
@@ -159,7 +163,6 @@ export default function App() {
 
   useEffect(() => {
     onAuthStateChanged(FIREBASE_AUTH, (user) => {
-      console.log('The user:', user);
       setUser(user);
     });
   }, []);

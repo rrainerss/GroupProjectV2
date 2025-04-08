@@ -1,16 +1,15 @@
-import { View, Text, StyleSheet, Dimensions, ScrollView, KeyboardAvoidingView, TextInput, TouchableOpacity, ToastAndroid } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { addDoc, onSnapshot, collection, Timestamp } from 'firebase/firestore';
-import { FAB } from 'react-native-paper';
+import { View, Text, StyleSheet, Dimensions, TextInput, TouchableOpacity, ToastAndroid } from 'react-native';
+import React, { useState } from 'react';
+import { addDoc, collection, Timestamp } from 'firebase/firestore';
+import { useNavigation } from '@react-navigation/native';
 
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../../FirebaseConfig'; 
-import WideCard from '@/app/components/WideCard';
 import { Colors } from '@/colors';
-import { useNavigation } from '@react-navigation/native';
 import AppbarNestedBlank from '@/app/components/AppbarNestedBlank';
 const { width } = Dimensions.get('window');
 
 const CreateGroup = () => {  
+  //Variables
   const [groupName, setGroupName] = React.useState('');
   const [groupDescription, setGroupDescription] = React.useState('');
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
@@ -24,6 +23,7 @@ const CreateGroup = () => {
     '#F0BAFF', '#FFBACF', '#C7FFBA',
   ];
 
+  //Group creation with field check
   const createGroup = async () => {
     if (!user) return;
 

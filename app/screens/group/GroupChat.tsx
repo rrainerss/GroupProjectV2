@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, FlatList, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { collection, addDoc, onSnapshot, query, orderBy, Timestamp } from 'firebase/firestore';
+import { IconButton } from 'react-native-paper';
+
 import { FIREBASE_DB, FIREBASE_AUTH } from '../../../FirebaseConfig';
 import AppbarNested from '@/app/components/AppbarNested';
-import { IconButton } from 'react-native-paper';
 import { Colors } from '@/colors';
 
 const GroupChat = () => {
+  //Variables
   const route = useRoute();
   const { groupId, groupName, accentColor } = route.params as { 
     groupId: string; 
     groupName: string; 
     accentColor: string; 
   };
-
   const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState('');
   const user = FIREBASE_AUTH.currentUser;

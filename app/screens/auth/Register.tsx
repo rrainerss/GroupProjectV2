@@ -3,12 +3,13 @@ import { doc, setDoc } from 'firebase/firestore';
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../../FirebaseConfig';
+import { Colors } from '@/colors';
 
 const { width } = Dimensions.get('window');
 
 const Register = () => {
-    const [year, setYear] = useState(3); // Default year selection
-    const [course, setCourse] = useState('IT'); // Default course selection
+    const [year, setYear] = useState(3); //Default year
+    const [course, setCourse] = useState('IT'); //Default course
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const auth = FIREBASE_AUTH;
@@ -26,6 +27,7 @@ const Register = () => {
 
             // Store additional user info in Firestore
             await setDoc(doc(db, "users", user.uid), {
+                uid: user.uid,
                 email: email,
                 year: year,
                 course: course,
@@ -103,7 +105,7 @@ export default Register;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#EDE5F6', // Light purple
+        backgroundColor: Colors.background,
         alignItems: 'center',
         paddingTop: 50,
     },

@@ -6,19 +6,17 @@ import { useNavigation } from '@react-navigation/native';
 
 type AppbarNestedProps = {
   title: string;
-  backgroundColor: string;
 };
 
-const AppbarNested = ({ title, backgroundColor }: AppbarNestedProps) => {
+const AppbarNested = ({ title }: AppbarNestedProps) => {
   const navigation = useNavigation();
 
   return (
-    <Appbar.Header style={[{ backgroundColor: backgroundColor }, styles.header]}>
+    <Appbar.Header style={styles.header}>
       <Appbar.BackAction onPress={() => navigation.goBack()} />
       <View style={styles.titleView}>
         <Text style={styles.title}>{title}</Text>
       </View>
-      <Appbar.Action icon="information-outline" onPress={() => {}} />
     </Appbar.Header>
   );
 };
@@ -34,7 +32,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: Colors.text,
+    color: Colors.accent,
   },
 });
 

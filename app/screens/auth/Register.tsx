@@ -1,19 +1,19 @@
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { ref, set } from 'firebase/database';
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../../FirebaseConfig';
-import { Colors } from '@/colors';
 
 const { width } = Dimensions.get('window');
 
 const Register = () => {
-    const [year, setYear] = useState(3); //Default year
-    const [course, setCourse] = useState('IT'); //Default course
+    const [year, setYear] = useState(3); // Default year selection
+    const [course, setCourse] = useState('IT'); // Default course selection
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const auth = FIREBASE_AUTH;
-    const db = FIREBASE_DB;
     const [loading, setLoading] = useState(false);
 
     const years = [1, 2, 3, 4, 5];
@@ -22,23 +22,38 @@ const Register = () => {
     const signUp = async () => {
         setLoading(true);
         try { 
+            // Validate required fields
+            if (!firstName.trim() || !lastName.trim() || !email.trim() || !password.trim() || !course || !year) {
+                alert('Please fill in all fields');
+                setLoading(false);
+                return;
+            }
+
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            // Store additional user info in Firestore
-            await setDoc(doc(db, "users", user.uid), {
-                uid: user.uid,
-                email: email,
+            // Store additional user info in Realtime Database
+            const userRef = ref(FIREBASE_DB, `users/${user.uid}`);
+            await set(userRef, {
+                email: email.trim(),
+                firstName: firstName.trim(),
+                lastName: lastName.trim(),
                 year: year,
                 course: course,
-                createdAt: new Date(),
+                createdAt: new Date().toISOString(),
             });
 
-            console.log("User registered:", user);
-            alert('Check your emails!');
+            console.log('User data saved:', {
+                email: email.trim(),
+                firstName: firstName.trim(),
+                lastName: lastName.trim(),
+                year: year,
+                course: course
+            });
+            alert('Registration successful!');
         } catch (error: any) {
             console.error(error);
-            alert('Sign up failed! ' + error.message);
+            alert('Sign up failed: ' + error.message);
         } finally {
             setLoading(false);
         }
@@ -49,19 +64,34 @@ const Register = () => {
             <Text style={styles.title}>Register</Text>
             <Text style={styles.subtitle}>Vidzemes Augstskola (ViA)</Text>
 
-            <TextInput style={styles.input} placeholder='First name' />
-            <TextInput style={styles.input} placeholder='Last name' />
+            <TextInput 
+                style={styles.input} 
+                placeholder='First name' 
+                onChangeText={(text) => setFirstName(text.trim())}
+                value={firstName}
+                autoCapitalize="words"
+            />
+            <TextInput 
+                style={styles.input} 
+                placeholder='Last name' 
+                onChangeText={(text) => setLastName(text.trim())}
+                value={lastName}
+                autoCapitalize="words"
+            />
             <TextInput 
                 style={styles.input} 
                 placeholder='E-mail' 
                 keyboardType='email-address' 
-                onChangeText={setEmail} 
+                onChangeText={(text) => setEmail(text.trim())}
+                value={email}
+                autoCapitalize="none"
             />
             <TextInput 
                 style={styles.input} 
                 placeholder='Password' 
                 secureTextEntry={true} 
-                onChangeText={setPassword} 
+                onChangeText={setPassword}
+                value={password}
             />
 
             {/* Year Selection */}
@@ -93,8 +123,12 @@ const Register = () => {
             </View>
 
             {/* Confirm Button */}
-            <TouchableOpacity style={styles.confirmButton} onPress={signUp}>
-                <Text style={styles.confirmText}>Confirm</Text>
+            <TouchableOpacity 
+                style={[styles.confirmButton, loading && styles.disabledButton]} 
+                onPress={signUp}
+                disabled={loading}
+            >
+                <Text style={styles.confirmText}>{loading ? 'Registering...' : 'Confirm'}</Text>
             </TouchableOpacity>
         </View>
     );
@@ -105,7 +139,7 @@ export default Register;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.background,
+        backgroundColor: '#EDE5F6', // Light purple
         alignItems: 'center',
         paddingTop: 50,
     },
@@ -168,5 +202,8 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: '#FFFFFF',
         fontWeight: 'bold',
+    },
+    disabledButton: {
+        opacity: 0.7,
     },
 });

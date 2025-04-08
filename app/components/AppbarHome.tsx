@@ -20,7 +20,14 @@ const AppbarHome = ({ title }: AppbarHomeProps) => {
       <View style={styles.titleView}>
         <Text style={styles.title}>{title}</Text>
       </View>
-      <Appbar.Action icon="account" onPress={() => {}} />
+      <Appbar.Action 
+        icon="account" 
+        onPress={() => {
+          navigation.navigate('Home', {
+            screen: 'ProfileSettings'
+          });
+        }} 
+      />
     </Appbar.Header>
   );
 };
@@ -28,6 +35,7 @@ const AppbarHome = ({ title }: AppbarHomeProps) => {
 const styles = StyleSheet.create({
   header: {
     justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
   },
   titleView: {
     flex: 1,

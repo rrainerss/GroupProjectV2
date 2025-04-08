@@ -1,4 +1,5 @@
-import './gesture-handler';
+import 'react-native-gesture-handler';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
@@ -13,27 +14,63 @@ import Welcome from './app/screens/auth/Welcome';
 import Login from './app/screens/auth/Login';
 import Register from './app/screens/auth/Register';
 import Home from './app/screens/Home';
-import PrivateChatHome from './app/screens/chat/PrivateChatHome';
+import ChatHome from './app/screens/chat/ChatHome';
 import PrivateChat from './app/screens/chat/PrivateChat';
-import GroupChatHome from './app/screens/group/GroupsHome';
-import GroupChat from './app/screens/group/GroupChat';
+import GroupChat from './app/screens/chat/GroupChat';
 import Files from './app/screens/files/Files';
-import CreateGroup from './app/screens/group/CreateGroup';
-import CreateChat from './app/screens/chat/CreateChat';
+import ProfileSettings from './app/screens/profile/ProfileSettings';
 
 const Stack = createNativeStackNavigator();
+const InsideStack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
+
+type RootStackParamList = {
+  Welcome: undefined;
+  Login: undefined;
+  Register: undefined;
+  Inside: undefined;
+};
+
+type InsideStackParamList = {
+  HomeStack: undefined;
+  MessagesHome: undefined;
+  GroupsHome: undefined;
+  FilesHome: undefined;
+  ProfileSettings: undefined;
+};
 
 //Nav stacks
 const HomeStack = () => {
   return (
-    <Stack.Navigator screenOptions={{
-      headerShown: false,
-      contentStyle: styles.mainContent,
-    }}>
+    <Stack.Navigator 
+      initialRouteName="HomeStack"
+      screenOptions={{
+        headerShown: false,
+        contentStyle: styles.mainContent,
+      }}
+    >
       <Stack.Screen name="HomeStack" component={Home} />
-      <Stack.Screen name="PrivateChat" component={PrivateChat} />
-      <Stack.Screen name="GroupChat" component={GroupChat} />
+      <Stack.Screen 
+        name="ProfileSettings" 
+        component={ProfileSettings}
+        options={{
+          headerShown: true,
+          headerTitle: "Profile Settings",
+          headerStyle: {
+            backgroundColor: '#FFFFFF',
+            borderBottomWidth: 1,
+            borderBottomColor: '#E0E0E0',
+          },
+          headerTitleStyle: {
+            color: '#F98012',
+            fontSize: 20,
+            fontWeight: 'bold',
+            marginBottom: 8,
+          },
+          headerTintColor: '#F98012',
+          headerShadowVisible: false,
+        }}
+      />
     </Stack.Navigator>
   );
 };
@@ -44,9 +81,7 @@ const MessagesStack = () => {
       headerShown: false,
       contentStyle: styles.mainContent,
     }}>
-      <Stack.Screen name="PrivateChatHome" component={PrivateChatHome} />
-      <Stack.Screen name="CreateChat" component={CreateChat} />
-      <Stack.Screen name="PrivateChat" component={PrivateChat} />
+      <Stack.Screen name="MessagesHome" component={Home} />
     </Stack.Navigator>
   );
 };
@@ -57,9 +92,7 @@ const GroupsStack = () => {
       headerShown: false,
       contentStyle: styles.mainContent,
     }}>
-      <Stack.Screen name="GroupsHome" component={GroupChatHome} />
-      <Stack.Screen name="GroupChat" component={GroupChat} />
-      <Stack.Screen name="CreateGroup" component={CreateGroup} />
+      <Stack.Screen name="GroupsHome" component={Home} />
     </Stack.Navigator>
   );
 };
@@ -76,7 +109,7 @@ const FilesStack = () => {
 };
 
 //Custom Drawer wrapper (with signout added)
-const CustomDrawerContent = (props: any) => {
+const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const handleSignOut = () => {
     signOut(FIREBASE_AUTH)
       .then(() => {
@@ -108,22 +141,23 @@ const CustomDrawerContent = (props: any) => {
 function InsideLayout() {
   return (
     <Drawer.Navigator
+      drawerContent={(props: any) => <CustomDrawerContent {...props} />}
       screenOptions={{
-        drawerActiveTintColor: Colors.accent,
         headerShown: false,
-        contentStyle: styles.mainContent,
         drawerStyle: {
-          width: 180,
+          backgroundColor: Colors.background,
+          width: 240,
         },
+        drawerActiveTintColor: Colors.accent,
+        drawerInactiveTintColor: Colors.text,
       }}
-      drawerContent={(props: DrawerContentComponentProps) => <CustomDrawerContent {...props} />}
     >
       <Drawer.Screen
         name="Home"
         component={HomeStack}
         options={{
           drawerIcon: ({ color, size }: { color: string; size: number }) => (
-            <MaterialCommunityIcons name="home-outline" size={size} color={color} />
+            <MaterialCommunityIcons name="home" size={size} color={color} />
           ),
         }}
       />
@@ -132,7 +166,7 @@ function InsideLayout() {
         component={MessagesStack}
         options={{
           drawerIcon: ({ color, size }: { color: string; size: number }) => (
-            <MaterialCommunityIcons name="message-text-outline" size={size} color={color} />
+            <MaterialCommunityIcons name="message" size={size} color={color} />
           ),
         }}
       />
@@ -141,7 +175,7 @@ function InsideLayout() {
         component={GroupsStack}
         options={{
           drawerIcon: ({ color, size }: { color: string; size: number }) => (
-            <MaterialCommunityIcons name="account-group-outline" size={size} color={color} />
+            <MaterialCommunityIcons name="account-group" size={size} color={color} />
           ),
         }}
       />
@@ -150,7 +184,7 @@ function InsideLayout() {
         component={FilesStack}
         options={{
           drawerIcon: ({ color, size }: { color: string; size: number }) => (
-            <MaterialCommunityIcons name="file-outline" size={size} color={color} />
+            <MaterialCommunityIcons name="file" size={size} color={color} />
           ),
         }}
       />
@@ -160,27 +194,35 @@ function InsideLayout() {
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    onAuthStateChanged(FIREBASE_AUTH, (user) => {
+    const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (user) => {
       setUser(user);
+      setLoading(false);
     });
+
+    return unsubscribe;
   }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Welcome'>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
         {user ? (
-          <Stack.Screen 
-            name="InsideApp" 
-            component={InsideLayout} 
-            options={{ headerShown: false }} 
-          />
+          <Stack.Screen name="Inside" component={InsideLayout} />
         ) : (
           <>
-            <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
-            <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-            <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
+            <Stack.Screen name="Welcome" component={Welcome} />
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Register" component={Register} />
           </>
         )}
       </Stack.Navigator>
@@ -190,6 +232,12 @@ export default function App() {
 
 const styles = StyleSheet.create({
   mainContent: {
+    backgroundColor: Colors.background,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: Colors.background,
   },
 });

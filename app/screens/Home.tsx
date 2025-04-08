@@ -142,13 +142,6 @@ const Home = () => {
           })}
         </View>
       </ScrollView>
-      <FAB
-        icon="plus"
-        onPress={() => navigation.navigate('CreateChat')}
-        style={styles.fab}
-        color={Colors.accent}
-        customSize={60}
-      />
     </View>
   );
 };
@@ -168,12 +161,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: Colors.text,
     marginBottom: 10,
-  },
-  fab: {
-    position: 'absolute',
-    right: 25,
-    bottom: 30,
-    backgroundColor: 'white',
-    elevation: 4,
   },
 });

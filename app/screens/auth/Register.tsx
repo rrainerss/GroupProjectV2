@@ -1,17 +1,19 @@
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../../FirebaseConfig';
 import { Colors } from '@/colors';
 
 const { width } = Dimensions.get('window');
 
 const Register = () => {
-    const [year, setYear] = useState(3); //Default year
-    const [course, setCourse] = useState('IT'); //Default course
+    const [year, setYear] = useState(3); // Default year
+    const [course, setCourse] = useState('IT'); // Default course
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const auth = FIREBASE_AUTH;
     const db = FIREBASE_DB;
     const [loading, setLoading] = useState(false);
@@ -21,14 +23,16 @@ const Register = () => {
 
     const signUp = async () => {
         setLoading(true);
-        try { 
+        try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            // Store additional user info in Firestore
+            // Store user info in Firestore
             await setDoc(doc(db, "users", user.uid), {
                 uid: user.uid,
                 email: email,
+                firstName: firstName.trim(),
+                lastName: lastName.trim(),
                 year: year,
                 course: course,
                 createdAt: new Date(),
@@ -48,9 +52,16 @@ const Register = () => {
         <View style={styles.container}>
             <Text style={styles.title}>Register</Text>
             <Text style={styles.subtitle}>Vidzemes Augstskola (ViA)</Text>
-
-            <TextInput style={styles.input} placeholder='First name' />
-            <TextInput style={styles.input} placeholder='Last name' />
+            <TextInput
+                style={styles.input}
+                placeholder='First name'
+                onChangeText={setFirstName}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder='Last name'
+                onChangeText={setLastName}
+            />
             <TextInput 
                 style={styles.input} 
                 placeholder='E-mail' 
@@ -63,7 +74,6 @@ const Register = () => {
                 secureTextEntry={true} 
                 onChangeText={setPassword} 
             />
-
             {/* Year Selection */}
             <Text style={styles.sectionTitle}>Year</Text>
             <View style={styles.selectionContainer}>
@@ -77,7 +87,6 @@ const Register = () => {
                     </TouchableOpacity>
                 ))}
             </View>
-
             {/* Course Selection */}
             <Text style={styles.sectionTitle}>Course</Text>
             <View style={styles.selectionContainer}>
@@ -91,10 +100,16 @@ const Register = () => {
                     </TouchableOpacity>
                 ))}
             </View>
-
             {/* Confirm Button */}
-            <TouchableOpacity style={styles.confirmButton} onPress={signUp}>
-                <Text style={styles.confirmText}>Confirm</Text>
+            <TouchableOpacity 
+                style={styles.confirmButton} 
+                onPress={signUp}
+                disabled={loading}>
+                {loading ? (
+                    <ActivityIndicator size="small" color="#FFFFFF" />
+                ) : (
+                    <Text style={styles.confirmText}>Confirm</Text>
+                )}
             </TouchableOpacity>
         </View>
     );

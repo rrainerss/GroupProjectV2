@@ -13,6 +13,7 @@ import Welcome from './app/screens/auth/Welcome';
 import Login from './app/screens/auth/Login';
 import Register from './app/screens/auth/Register';
 import Home from './app/screens/Home';
+import ProfileSettings from './app/screens/profile/ProfileSettings';
 import PrivateChatHome from './app/screens/chat/PrivateChatHome';
 import PrivateChat from './app/screens/chat/PrivateChat';
 import GroupChatHome from './app/screens/group/GroupsHome';
@@ -34,6 +35,7 @@ const HomeStack = () => {
       <Stack.Screen name="HomeStack" component={Home} />
       <Stack.Screen name="PrivateChat" component={PrivateChat} />
       <Stack.Screen name="GroupChat" component={GroupChat} />
+      <Stack.Screen name="ProfileSettings" component={ProfileSettings} />
     </Stack.Navigator>
   );
 };
